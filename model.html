@@ -11953,12 +11953,12 @@ date: 2/18/2018</code></pre>
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[6]:</div>
+<div class="prompt input_prompt">In&nbsp;[5]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">text_cnn</span><span class="p">(</span><span class="n">fiction</span><span class="p">,</span> <span class="n">dropout_keep_prob</span><span class="p">):</span>
     <span class="c1"># 嵌入层</span>
-    <span class="k">with</span> <span class="n">tf</span><span class="o">.</span><span class="n">name_scope</span><span class="p">(</span><span class="s1">&#39;word_embedding&#39;</span><span class="p">):</span>
+    <span class="k">with</span> <span class="n">tf</span><span class="o">.</span><span class="n">variable_scope</span><span class="p">(</span><span class="s1">&#39;word_embedding&#39;</span><span class="p">):</span>
         <span class="n">fiction_embed_matrix</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">Variable</span><span class="p">(</span><span class="n">tf</span><span class="o">.</span><span class="n">random_uniform</span><span class="p">([</span><span class="n">word_set_size</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="n">embed_dim</span><span class="p">],</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;fiction_embed_matrix&quot;</span><span class="p">)</span>
         <span class="n">fiction_embed_layer</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">embedding_lookup</span><span class="p">(</span><span class="n">fiction_embed_matrix</span><span class="p">,</span> <span class="n">fiction</span><span class="p">,</span> <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;fiction_embed_layer&quot;</span><span class="p">)</span>
         <span class="n">fiction_embed_layer_expand</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">expand_dims</span><span class="p">(</span><span class="n">fiction_embed_layer</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
@@ -11966,11 +11966,9 @@ date: 2/18/2018</code></pre>
     <span class="c1"># 卷积池化层</span>
     <span class="n">pool_layer_lst</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="k">for</span> <span class="n">window_size</span> <span class="ow">in</span> <span class="n">window_sizes</span><span class="p">:</span>
-        <span class="k">with</span> <span class="n">tf</span><span class="o">.</span><span class="n">name_scope</span><span class="p">(</span><span class="s2">&quot;fiction_conv_maxpool_</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">window_size</span><span class="p">)):</span>
+        <span class="k">with</span> <span class="n">tf</span><span class="o">.</span><span class="n">variable_scope</span><span class="p">(</span><span class="s2">&quot;fiction_conv_maxpool_</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">window_size</span><span class="p">)):</span>
             <span class="n">filter_weights</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">Variable</span><span class="p">(</span><span class="n">tf</span><span class="o">.</span><span class="n">truncated_normal</span><span class="p">([</span><span class="n">window_size</span><span class="p">,</span> <span class="n">embed_dim</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">filter_num</span><span class="p">],</span><span class="n">stddev</span><span class="o">=</span><span class="mf">0.1</span><span class="p">),</span><span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;filter_weights&quot;</span><span class="p">)</span>
-            <span class="n">variable_summaries</span><span class="p">(</span><span class="n">filter_weights</span><span class="p">)</span>
             <span class="n">filter_bias</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">Variable</span><span class="p">(</span><span class="n">tf</span><span class="o">.</span><span class="n">constant</span><span class="p">(</span><span class="mf">0.1</span><span class="p">,</span> <span class="n">shape</span><span class="o">=</span><span class="p">[</span><span class="n">filter_num</span><span class="p">]),</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;filter_bias&quot;</span><span class="p">)</span>
-            <span class="n">variable_summaries</span><span class="p">(</span><span class="n">filter_bias</span><span class="p">)</span>
               
             <span class="n">conv_layer</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">conv2d</span><span class="p">(</span><span class="n">fiction_embed_layer_expand</span><span class="p">,</span> <span class="n">filter_weights</span><span class="p">,</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">],</span> <span class="n">padding</span><span class="o">=</span><span class="s2">&quot;VALID&quot;</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;conv_layer&quot;</span><span class="p">)</span>
             <span class="n">relu_layer</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">relu</span><span class="p">(</span><span class="n">tf</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">bias_add</span><span class="p">(</span><span class="n">conv_layer</span><span class="p">,</span><span class="n">filter_bias</span><span class="p">),</span> <span class="n">name</span> <span class="o">=</span><span class="s2">&quot;relu_layer&quot;</span><span class="p">)</span>
@@ -11979,7 +11977,7 @@ date: 2/18/2018</code></pre>
             <span class="n">pool_layer_lst</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">maxpool_layer</span><span class="p">)</span>
       
     <span class="c1"># Dropout层</span>
-    <span class="k">with</span> <span class="n">tf</span><span class="o">.</span><span class="n">name_scope</span><span class="p">(</span><span class="s1">&#39;pool_dropout&#39;</span><span class="p">):</span>
+    <span class="k">with</span> <span class="n">tf</span><span class="o">.</span><span class="n">variable_scope</span><span class="p">(</span><span class="s1">&#39;pool_dropout&#39;</span><span class="p">):</span>
         <span class="n">pool_layer</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span><span class="n">pool_layer_lst</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="n">name</span> <span class="o">=</span><span class="s2">&quot;pool_layer&quot;</span><span class="p">)</span>
         <span class="n">max_num</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">window_sizes</span><span class="p">)</span> <span class="o">*</span> <span class="n">filter_num</span>
         <span class="n">pool_layer_flat</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">pool_layer</span> <span class="p">,</span> <span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">max_num</span><span class="p">],</span> <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;pool_layer_flat&quot;</span><span class="p">)</span>
@@ -11987,9 +11985,8 @@ date: 2/18/2018</code></pre>
         <span class="n">dropout_layer</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">dropout</span><span class="p">(</span><span class="n">pool_layer_flat</span><span class="p">,</span> <span class="n">dropout_keep_prob</span><span class="p">,</span> <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;dropout_layer&quot;</span><span class="p">)</span>
           
     <span class="c1"># softmax层</span>
-    <span class="k">with</span> <span class="n">tf</span><span class="o">.</span><span class="n">name_scope</span><span class="p">(</span><span class="s1">&#39;softmax&#39;</span><span class="p">):</span>
+    <span class="k">with</span> <span class="n">tf</span><span class="o">.</span><span class="n">variable_scope</span><span class="p">(</span><span class="s1">&#39;softmax&#39;</span><span class="p">):</span>
         <span class="n">reshape</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">dropout_layer</span><span class="p">,</span> <span class="n">shape</span><span class="o">=</span><span class="p">[</span><span class="n">batch_size</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">])</span>
-        <span class="n">dim</span> <span class="o">=</span> <span class="n">reshape</span><span class="o">.</span><span class="n">get_shape</span><span class="p">()[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">value</span>
         <span class="n">weights</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">get_variable</span><span class="p">(</span><span class="s1">&#39;softmax_linear&#39;</span><span class="p">,</span>
                                   <span class="n">shape</span> <span class="o">=</span> <span class="p">[</span><span class="mi">8</span><span class="p">,</span> <span class="mi">2</span><span class="p">],</span>
                                   <span class="n">dtype</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">float32</span><span class="p">,</span>
@@ -11999,7 +11996,6 @@ date: 2/18/2018</code></pre>
                                   <span class="n">dtype</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">float32</span><span class="p">,</span>
                                   <span class="n">initializer</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">constant_initializer</span><span class="p">(</span><span class="mf">0.1</span><span class="p">))</span>
         <span class="n">softmax_linear</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">tf</span><span class="o">.</span><span class="n">matmul</span><span class="p">(</span><span class="n">reshape</span><span class="p">,</span> <span class="n">weights</span><span class="p">),</span> <span class="n">biases</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;softmax_linear&#39;</span><span class="p">)</span>
-        <span class="n">tf</span><span class="o">.</span><span class="n">summary</span><span class="o">.</span><span class="n">histogram</span><span class="p">(</span><span class="s1">&#39;softmax_linear&#39;</span><span class="p">,</span> <span class="n">softmax_linear</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">softmax_linear</span>
 </pre></div>
 
@@ -12018,25 +12014,29 @@ date: 2/18/2018</code></pre>
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[7]:</div>
+<div class="prompt input_prompt">In&nbsp;[6]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="n">tf</span><span class="o">.</span><span class="n">reset_default_graph</span><span class="p">()</span>
 <span class="n">train_graph</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">Graph</span><span class="p">()</span>
 <span class="k">with</span> <span class="n">train_graph</span><span class="o">.</span><span class="n">as_default</span><span class="p">():</span>
     <span class="n">fiction</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">placeholder</span><span class="p">(</span><span class="n">dtype</span><span class="o">=</span><span class="n">tf</span><span class="o">.</span><span class="n">int32</span><span class="p">,</span> <span class="n">shape</span><span class="o">=</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="mi">1500</span><span class="p">],</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;fiction&#39;</span><span class="p">)</span>
-    <span class="n">targets</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">placeholder</span><span class="p">(</span><span class="n">tf</span><span class="o">.</span><span class="n">int32</span><span class="p">,</span> <span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;targets&quot;</span><span class="p">)</span>
+    <span class="n">targets</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">placeholder</span><span class="p">(</span><span class="n">tf</span><span class="o">.</span><span class="n">int32</span><span class="p">,</span> <span class="p">[</span><span class="kc">None</span><span class="p">],</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;targets&quot;</span><span class="p">)</span>
     <span class="n">LearningRate</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">placeholder</span><span class="p">(</span><span class="n">tf</span><span class="o">.</span><span class="n">float32</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;LearningRate&quot;</span><span class="p">)</span>
     <span class="n">dropout_keep_prob</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">placeholder</span><span class="p">(</span><span class="n">tf</span><span class="o">.</span><span class="n">float32</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;dropout_keep_prob&quot;</span><span class="p">)</span>
-    <span class="n">targets_reshape</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">targets</span><span class="p">,</span> <span class="n">shape</span><span class="o">=</span><span class="p">[</span><span class="n">batch_size</span><span class="p">])</span>
       
     <span class="c1"># inference</span>
-    <span class="k">with</span> <span class="n">tf</span><span class="o">.</span><span class="n">variable_scope</span><span class="p">(</span><span class="s2">&quot;inference&quot;</span><span class="p">):</span>
+    <span class="k">with</span> <span class="n">tf</span><span class="o">.</span><span class="n">name_scope</span><span class="p">(</span><span class="s2">&quot;inference&quot;</span><span class="p">):</span>
         <span class="n">softmax_linear</span> <span class="o">=</span> <span class="n">text_cnn</span><span class="p">(</span><span class="n">fiction</span><span class="p">,</span> <span class="n">dropout_keep_prob</span><span class="p">)</span>
+    
+    <span class="k">with</span> <span class="n">tf</span><span class="o">.</span><span class="n">name_scope</span><span class="p">(</span><span class="s1">&#39;accuracy&#39;</span><span class="p">):</span>
+        <span class="n">correct</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">in_top_k</span><span class="p">(</span><span class="n">softmax_linear</span><span class="p">,</span> <span class="n">targets</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="n">correct</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">cast</span><span class="p">(</span><span class="n">correct</span><span class="p">,</span> <span class="n">tf</span><span class="o">.</span><span class="n">float16</span><span class="p">)</span>
+        <span class="n">accuracy</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">reduce_mean</span><span class="p">(</span><span class="n">correct</span><span class="p">)</span>
       
     <span class="c1"># loss计算</span>
     <span class="k">with</span> <span class="n">tf</span><span class="o">.</span><span class="n">name_scope</span><span class="p">(</span><span class="s2">&quot;loss&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">scope</span><span class="p">:</span>
-        <span class="n">cross_entropy</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">sparse_softmax_cross_entropy_with_logits</span><span class="p">(</span><span class="n">logits</span><span class="o">=</span><span class="n">softmax_linear</span><span class="p">,</span> <span class="n">labels</span><span class="o">=</span><span class="n">targets_reshape</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;xentropy_per_example&#39;</span><span class="p">)</span>
+        <span class="n">cross_entropy</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">sparse_softmax_cross_entropy_with_logits</span><span class="p">(</span><span class="n">logits</span><span class="o">=</span><span class="n">softmax_linear</span><span class="p">,</span> <span class="n">labels</span><span class="o">=</span><span class="n">targets</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;xentropy_per_example&#39;</span><span class="p">)</span>
         <span class="n">loss</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">reduce_mean</span><span class="p">(</span><span class="n">cross_entropy</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;loss&#39;</span><span class="p">)</span>
       
     <span class="c1"># 训练</span>
@@ -12044,11 +12044,6 @@ date: 2/18/2018</code></pre>
         <span class="n">optimizer</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">train</span><span class="o">.</span><span class="n">AdamOptimizer</span><span class="p">(</span><span class="n">learning_rate</span><span class="o">=</span><span class="n">LearningRate</span><span class="p">)</span>
         <span class="n">global_step</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">Variable</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;global_step&#39;</span><span class="p">,</span> <span class="n">trainable</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
         <span class="n">train_op</span> <span class="o">=</span> <span class="n">optimizer</span><span class="o">.</span><span class="n">minimize</span><span class="p">(</span><span class="n">loss</span><span class="p">,</span> <span class="n">global_step</span><span class="o">=</span><span class="n">global_step</span><span class="p">)</span>
-      
-    <span class="k">with</span> <span class="n">tf</span><span class="o">.</span><span class="n">name_scope</span><span class="p">(</span><span class="s1">&#39;accuracy&#39;</span><span class="p">):</span>
-        <span class="n">correct</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">in_top_k</span><span class="p">(</span><span class="n">softmax_linear</span><span class="p">,</span> <span class="n">targets_reshape</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
-        <span class="n">correct</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">cast</span><span class="p">(</span><span class="n">correct</span><span class="p">,</span> <span class="n">tf</span><span class="o">.</span><span class="n">float16</span><span class="p">)</span>
-        <span class="n">accuracy</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">reduce_mean</span><span class="p">(</span><span class="n">correct</span><span class="p">)</span>
 </pre></div>
 
 </div>
@@ -12066,7 +12061,7 @@ date: 2/18/2018</code></pre>
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[8]:</div>
+<div class="prompt input_prompt">In&nbsp;[7]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">get_batches</span><span class="p">(</span><span class="n">Xs</span><span class="p">,</span> <span class="n">ys</span><span class="p">,</span> <span class="n">batch_size</span><span class="p">):</span>
@@ -12090,7 +12085,7 @@ date: 2/18/2018</code></pre>
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[9]:</div>
+<div class="prompt input_prompt">In&nbsp;[8]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="n">losses</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;train&#39;</span><span class="p">:[],</span> <span class="s1">&#39;cv&#39;</span><span class="p">:[]}</span>
@@ -12102,7 +12097,7 @@ date: 2/18/2018</code></pre>
     
     <span class="c1"># Train Summaries</span>
     <span class="n">train_summary_op</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">summary</span><span class="o">.</span><span class="n">merge</span><span class="p">([</span><span class="n">loss_summary</span><span class="p">,</span> <span class="n">accuracy_summary</span><span class="p">])</span>
-    <span class="n">train_summary_writer</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">summary</span><span class="o">.</span><span class="n">FileWriter</span><span class="p">(</span><span class="s2">&quot;runs/train&quot;</span><span class="p">,</span> <span class="n">sess</span><span class="o">.</span><span class="n">graph</span><span class="p">)</span>
+    <span class="n">train_summary_writer</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">summary</span><span class="o">.</span><span class="n">FileWriter</span><span class="p">(</span><span class="s2">&quot;runs/train&quot;</span><span class="p">,</span> <span class="n">graph</span><span class="o">=</span><span class="n">train_graph</span><span class="p">)</span>
     
     <span class="n">sess</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">tf</span><span class="o">.</span><span class="n">global_variables_initializer</span><span class="p">())</span>
     <span class="n">saver</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">train</span><span class="o">.</span><span class="n">Saver</span><span class="p">()</span>
@@ -12124,7 +12119,7 @@ date: 2/18/2018</code></pre>
                 <span class="n">fictions</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">take</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)[</span><span class="n">i</span><span class="p">]</span>
           
             <span class="n">feed</span> <span class="o">=</span> <span class="p">{</span><span class="n">fiction</span><span class="p">:</span> <span class="n">fictions</span><span class="p">,</span>
-                    <span class="n">targets</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="p">[</span><span class="n">batch_size</span><span class="p">,</span> <span class="mi">1</span><span class="p">]),</span>
+                    <span class="n">targets</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="p">[</span><span class="n">batch_size</span><span class="p">]),</span>
                     <span class="n">LearningRate</span><span class="p">:</span> <span class="n">learningrate</span><span class="p">,</span>
                     <span class="n">dropout_keep_prob</span><span class="p">:</span> <span class="mf">0.5</span><span class="p">}</span>
               
@@ -12149,7 +12144,7 @@ date: 2/18/2018</code></pre>
                 <span class="n">fictions</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">take</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)[</span><span class="n">i</span><span class="p">]</span>
                
             <span class="n">feed</span> <span class="o">=</span> <span class="p">{</span><span class="n">fiction</span><span class="p">:</span> <span class="n">fictions</span><span class="p">,</span>
-                    <span class="n">targets</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="p">[</span><span class="n">batch_size</span><span class="p">,</span> <span class="mi">1</span><span class="p">]),</span>
+                    <span class="n">targets</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="p">[</span><span class="n">batch_size</span><span class="p">]),</span>
                     <span class="n">LearningRate</span><span class="p">:</span> <span class="n">learningrate</span><span class="p">,</span>
                     <span class="n">dropout_keep_prob</span><span class="p">:</span> <span class="mf">1.0</span><span class="p">}</span>
             
@@ -12181,7 +12176,7 @@ date: 2/18/2018</code></pre>
             <span class="n">fictions</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">take</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)[</span><span class="n">i</span><span class="p">]</span>
 
         <span class="n">feed</span> <span class="o">=</span> <span class="p">{</span><span class="n">fiction</span><span class="p">:</span> <span class="n">fictions</span><span class="p">,</span>
-                <span class="n">targets</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="p">[</span><span class="n">batch_size</span><span class="p">,</span> <span class="mi">1</span><span class="p">]),</span>
+                <span class="n">targets</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="p">[</span><span class="n">batch_size</span><span class="p">]),</span>
                 <span class="n">LearningRate</span><span class="p">:</span> <span class="n">learningrate</span><span class="p">,</span>
                 <span class="n">dropout_keep_prob</span><span class="p">:</span> <span class="mf">1.0</span><span class="p">}</span>
 
@@ -12215,40 +12210,41 @@ date: 2/18/2018</code></pre>
 
 
 <div class="output_subarea output_stream output_stdout output_text">
-<pre>2018-02-19T11:05:54.953488: Epoch   0 Batch    0/1223   train_loss = 0.690    accuracy = 0.562
-2018-02-19T11:07:03.556690: Epoch   0 Batch  200/1223   train_loss = 0.381    accuracy = 0.812
-2018-02-19T11:08:19.117430: Epoch   0 Batch  400/1223   train_loss = 0.375    accuracy = 0.875
-2018-02-19T11:09:30.177000: Epoch   0 Batch  600/1223   train_loss = 0.387    accuracy = 0.812
-2018-02-19T11:10:36.180178: Epoch   0 Batch  800/1223   train_loss = 0.258    accuracy = 0.875
-2018-02-19T11:11:42.207720: Epoch   0 Batch 1000/1223   train_loss = 0.241    accuracy = 0.812
-2018-02-19T11:12:46.132675: Epoch   0 Batch 1200/1223   train_loss = 0.056    accuracy = 1.000
-2018-02-19T11:12:53.265707: Epoch   0 Batch    0/135   cv_loss = 0.029    accuracy = 1.000
-2018-02-19T11:12:55.838315: Epoch   0 Batch   50/135   cv_loss = 0.028    accuracy = 1.000
-2018-02-19T11:12:58.392323: Epoch   0 Batch  100/135   cv_loss = 0.011    accuracy = 1.000
-accurate is: 0.99072
-2018-02-19T11:13:57.951073: Epoch   1 Batch  177/1223   train_loss = 0.300    accuracy = 0.875
-2018-02-19T11:15:04.085234: Epoch   1 Batch  377/1223   train_loss = 0.322    accuracy = 0.938
-2018-02-19T11:16:13.068223: Epoch   1 Batch  577/1223   train_loss = 0.039    accuracy = 1.000
-2018-02-19T11:17:22.179264: Epoch   1 Batch  777/1223   train_loss = 0.120    accuracy = 0.938
-2018-02-19T11:18:29.995707: Epoch   1 Batch  977/1223   train_loss = 0.311    accuracy = 0.938
-2018-02-19T11:19:34.870264: Epoch   1 Batch 1177/1223   train_loss = 0.027    accuracy = 1.000
-2018-02-19T11:19:49.988501: Epoch   1 Batch   15/135   cv_loss = 0.014    accuracy = 1.000
-2018-02-19T11:19:52.607720: Epoch   1 Batch   65/135   cv_loss = 0.015    accuracy = 1.000
-2018-02-19T11:19:55.165327: Epoch   1 Batch  115/135   cv_loss = 0.072    accuracy = 0.938
-accurate is: 0.99072
-2018-02-19T11:20:45.653843: Epoch   2 Batch  154/1223   train_loss = 0.045    accuracy = 1.000
-2018-02-19T11:21:49.654199: Epoch   2 Batch  354/1223   train_loss = 0.183    accuracy = 0.938
-2018-02-19T11:22:53.630968: Epoch   2 Batch  554/1223   train_loss = 0.130    accuracy = 0.938
-2018-02-19T11:23:57.836332: Epoch   2 Batch  754/1223   train_loss = 0.011    accuracy = 1.000
-2018-02-19T11:25:01.636689: Epoch   2 Batch  954/1223   train_loss = 0.026    accuracy = 1.000
-2018-02-19T11:26:05.586038: Epoch   2 Batch 1154/1223   train_loss = 0.018    accuracy = 1.000
-2018-02-19T11:26:28.973704: Epoch   2 Batch   30/135   cv_loss = 0.009    accuracy = 1.000
-2018-02-19T11:26:31.541712: Epoch   2 Batch   80/135   cv_loss = 0.003    accuracy = 1.000
-2018-02-19T11:26:34.096121: Epoch   2 Batch  130/135   cv_loss = 0.222    accuracy = 0.938
-accurate is: 0.99268
-2018-02-19T11:26:38.364731: Batch   30/125 accuracy = 0.938
-2018-02-19T11:26:40.947339: Batch   80/125 accuracy = 1.000
-accurate is: 0.99268
+<pre>2018-02-21T11:44:11.676049: Epoch   0 Batch    0/1223   train_loss = 0.691    accuracy = 0.688
+2018-02-21T11:45:15.047378: Epoch   0 Batch  200/1223   train_loss = 0.361    accuracy = 0.812
+2018-02-21T11:46:18.370118: Epoch   0 Batch  400/1223   train_loss = 0.400    accuracy = 0.812
+2018-02-21T11:47:21.613237: Epoch   0 Batch  600/1223   train_loss = 0.291    accuracy = 0.938
+2018-02-21T11:48:24.803361: Epoch   0 Batch  800/1223   train_loss = 0.212    accuracy = 0.938
+2018-02-21T11:49:28.065680: Epoch   0 Batch 1000/1223   train_loss = 1.034    accuracy = 0.812
+2018-02-21T11:50:31.213401: Epoch   0 Batch 1200/1223   train_loss = 0.098    accuracy = 1.000
+2018-02-21T11:50:38.234219: Epoch   0 Batch    0/135   cv_loss = 0.014    accuracy = 1.000
+2018-02-21T11:50:40.758027: Epoch   0 Batch   50/135   cv_loss = 0.017    accuracy = 1.000
+2018-02-21T11:50:43.256635: Epoch   0 Batch  100/135   cv_loss = 0.038    accuracy = 1.000
+accurate is: 0.97949
+2018-02-21T11:51:41.246351: Epoch   1 Batch  177/1223   train_loss = 0.101    accuracy = 0.938
+2018-02-21T11:52:44.321870: Epoch   1 Batch  377/1223   train_loss = 0.039    accuracy = 1.000
+2018-02-21T11:53:47.588787: Epoch   1 Batch  577/1223   train_loss = 0.097    accuracy = 0.938
+2018-02-21T11:54:50.849912: Epoch   1 Batch  777/1223   train_loss = 0.050    accuracy = 1.000
+2018-02-21T11:55:53.858233: Epoch   1 Batch  977/1223   train_loss = 0.055    accuracy = 1.000
+2018-02-21T11:56:57.072354: Epoch   1 Batch 1177/1223   train_loss = 0.424    accuracy = 0.812
+2018-02-21T11:57:12.054187: Epoch   1 Batch   15/135   cv_loss = 0.023    accuracy = 1.000
+2018-02-21T11:57:14.575994: Epoch   1 Batch   65/135   cv_loss = 0.011    accuracy = 1.000
+2018-02-21T11:57:17.090603: Epoch   1 Batch  115/135   cv_loss = 0.021    accuracy = 1.000
+accurate is: 0.98535
+2018-02-21T11:58:06.828301: Epoch   2 Batch  154/1223   train_loss = 0.023    accuracy = 1.000
+2018-02-21T11:59:09.977023: Epoch   2 Batch  354/1223   train_loss = 0.179    accuracy = 0.938
+2018-02-21T12:00:13.005142: Epoch   2 Batch  554/1223   train_loss = 0.025    accuracy = 1.000
+2018-02-21T12:01:15.957262: Epoch   2 Batch  754/1223   train_loss = 0.048    accuracy = 1.000
+2018-02-21T12:02:19.033380: Epoch   2 Batch  954/1223   train_loss = 0.013    accuracy = 1.000
+2018-02-21T12:03:22.079099: Epoch   2 Batch 1154/1223   train_loss = 0.009    accuracy = 1.000
+2018-02-21T12:03:45.022946: Epoch   2 Batch   30/135   cv_loss = 0.225    accuracy = 0.938
+2018-02-21T12:03:47.547155: Epoch   2 Batch   80/135   cv_loss = 0.008    accuracy = 1.000
+2018-02-21T12:03:50.059764: Epoch   2 Batch  130/135   cv_loss = 0.084    accuracy = 0.938
+accurate is: 0.98535
+2018-02-21T12:03:50.329766: Batch    0/125 accuracy = 1.000
+2018-02-21T12:03:52.797174: Batch   50/125 accuracy = 1.000
+2018-02-21T12:03:55.297580: Batch  100/125 accuracy = 1.000
+accurate is: 0.98584
 Model Trained and Saved
 </pre>
 </div>
@@ -12273,7 +12269,6 @@ Model Trained and Saved
 <p>Tensorboard中的accurate折线图</p>
 <p><img src="https://github.com/yudake/sundries/blob/master/porn_classify_arrurate.png?raw=true" alt="accurate折线图"></p>
 <p>从图中可以得出，训练后准确率稳定在90%以上，平均准确率在98%。</p>
-<p>在交叉验证集和测试集上的准确率都在99%。</p>
 <p>经过多次验证，准确率可以在98%以上。</p>
 
 </div>

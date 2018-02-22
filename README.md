@@ -9,6 +9,8 @@ Author:yudake
 date:2018/2/22
 ```
 
+项目详细解析可以参考我的这篇[博文](http://yudake.xin/articles/2018/02/22/1519289676946.html)
+
 开发环境：
 
 - python3.x；

@@ -9,7 +9,7 @@ Author:yudake
 date:2018/2/22
 ```
 
-开发系统环境：
+开发环境：
 
 - python3.x；
 - tensorflow1.2；
@@ -21,6 +21,14 @@ date:2018/2/22
 
 ## 模型
 
-![系统模型](https://github.com/yudake/porn_fiction_classify/blob/master/images/%E6%A8%A1%E5%9E%8B%E7%A4%BA%E6%84%8F%E5%9B%BE.jpg?raw=true)
+![系统模型](https://github.com/yudake/porn_fiction_classify/blob/master/images/model_graph.jpg?raw=true)
 
-- 输入：文章经过处理后的矩阵
+- 输入：文章经过处理后的句子矩阵；
+- 模型：文本卷积神经网络；
+- 输出：分类结果。
+
+## 准确率曲线
+
+![准确率](https://github.com/yudake/porn_fiction_classify/blob/master/images/porn_classify_arrurate.png?raw=true)
+
+具体内容请看代码与博客。

@@ -13,6 +13,7 @@ date:2018/2/22
 
 - python3.x；
 - tensorflow1.2；
+- jieba；
 - 其他相关类库，程序内会有提及。
 
 目标：实现色情文章检测。
@@ -31,4 +32,4 @@ date:2018/2/22
 
 ![准确率](https://github.com/yudake/porn_fiction_classify/blob/master/images/porn_classify_arrurate.png?raw=true)
 
-具体内容请看代码与博客。
+平均准确率在98%。具体内容请看代码与博客。
